@@ -2,3 +2,8 @@ data/
 .ipynb_checkpoints/
 runs/
 .DS_Store
+<<<<<<< HEAD
+=======
+scratch/
+ultralytics/
+>>>>>>> 75d8b1f (notebook for graident wrt input)

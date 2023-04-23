@@ -1,7 +1,7 @@
 path: /Users/jay.je/Documents/CU_courses/spring2023/HPML/e6998-5_final_project/data/
-train: YOLO_data_guo/
-val:  YOLO_data_guo/
-test:  YOLO_data_guo/
+train: YOLO_short/
+val:  YOLO_short/
+test:  YOLO_short/
 
 nc: 10
 
