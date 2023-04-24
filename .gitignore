@@ -4,3 +4,7 @@ runs/
 .DS_Store
 scratch/
 ultralytics/
+GANs_training/
+__pycache__/
+gans_data/
+
