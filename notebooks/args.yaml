@@ -5,7 +5,7 @@ data: ../detection_data.yaml
 epochs: 1
 patience: 50
 batch: 1
-imgsz: 832
+imgsz: 128
 save: false
 save_period: -1
 cache: false
