@@ -1,6 +1,6 @@
 task: detect
 mode: predict
-model: data/model_digits_data_ver1/weights/best.pt
+model: model_results/train/weights/best.pt
 data: detection_data.yaml
 epochs: 100
 patience: 50

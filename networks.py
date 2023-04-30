@@ -7,9 +7,9 @@ class Generator(torch.nn.Module):
     
     def __init__(self):
         super(Generator, self).__init__()
-        # 1 * 28 * 140
+        # 3 * 28 * 140
         self.convblock1 = ConvBlock(
-            channels=(1, 8),
+            channels=(3, 8),
             filter_shape=(3, 3),
             stride=1,
             padding=0,
@@ -58,18 +58,18 @@ class Generator(torch.nn.Module):
         )
         # 8 * 26 * 138
         self.transconvblock3 = TransConvBlock(
-            channels=(8, 1),
+            channels=(8, 3),
             filter_shape=(3, 3),
             stride=1,
             output_padding=0,
             batch_norm=True,
             activation=True,
         )
-        # 1 * 28 * 143
+        # 3 * 28 * 140
         
     def forward(self, inp):
         """
-        input should be tensor with dimensions (num_samples, 1, M, N)
+        input should be tensor with dimensions (num_samples, C, M, N)
         """
         
         out = self.convblock1(inp)
@@ -90,9 +90,9 @@ class Discriminator(torch.nn.Module):
 
     def __init__(self):
         super(Discriminator, self).__init__()
-        # 1 * 28 * 140
+        # 3 * 28 * 140
         self.convblock1 = ConvBlock(
-            channels=(1, 8),
+            channels=(3, 8),
             filter_shape=(4, 4),
             stride=1,
             padding=0,
@@ -132,10 +132,11 @@ class Discriminator(torch.nn.Module):
 
     def forward(self, inp):
         """
-        input should be tensor with dimensions (num_samples, 1, M, N)
+        input should be tensor with dimensions (num_samples, C, M, N)
         """
         
         num_samples = inp.shape[0]
+        C = inp.shape[1]
         
         out = self.convblock1(inp)
         out = self.convblock2(out)
