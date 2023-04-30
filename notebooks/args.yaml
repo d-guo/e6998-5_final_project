@@ -1,7 +1,7 @@
 task: detect
 mode: predict
 model: ../model_results/train/weights/best.pt
-data: ../detection_data.yaml
+data: ""
 epochs: 1
 patience: 50
 batch: 1
