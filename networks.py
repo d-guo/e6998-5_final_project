@@ -7,118 +7,128 @@ class Generator(torch.nn.Module):
     
     def __init__(self):
         super(Generator, self).__init__()
-        
-#         self.convblock1 = ConvBlock(
-#             channels=(1, 16),
-#             filter_shape=(3, 3),
-#             downsample=True,
-#             batch_norm=False,
-#             activation=True,
-#         )
-        
-#         self.convblock2 = ConvBlock(
-#             channels=(16, 32),
-#             filter_shape=(3, 3),
-#             downsample=True,
-#             batch_norm=True,
-#             activation=True,
-#         )
-        
-#         self.convblock3 = ConvBlock(
-#             channels=(32, 64),
-#             filter_shape=(3, 3),
-#             downsample=True,
-#             batch_norm=True,
-#             activation=True,
-#         )
-        
-#         self.transconvblock1 = TransConvBlock(
-#             channels=(64, 32),
-#             filter_shape=(3, 3),
-#             upsample=True,
-#             batch_norm=True,
-#             activation=True,
-#         )
-        
-#         self.transconvblock2 = TransConvBlock(
-#             channels=(32, 16),
-#             filter_shape=(3, 3),
-#             upsample=True,
-#             batch_norm=True,
-#             activation=True,
-#         )
-        
-#         self.transconvblock3 = TransConvBlock(
-#             channels=(16, 1),
-#             filter_shape=(3, 3),
-#             upsample=True,
-#             batch_norm=False,
-#             activation=True,
-#         )
-
-        self.test = torch.nn.Linear(1 * 1 * 28 * 5 * 28, 1 * 1 * 28 * 5 * 28)
+        # 1 * 28 * 140
+        self.convblock1 = ConvBlock(
+            channels=(1, 8),
+            filter_shape=(3, 3),
+            stride=1,
+            padding=0,
+            batch_norm=False,
+            activation=True,
+        )
+        # 8 * 26 * 138
+        self.convblock2 = ConvBlock(
+            channels=(8, 16),
+            filter_shape=(3, 3),
+            stride=(2, 4),
+            padding=0,
+            batch_norm=True,
+            activation=True,
+        )
+        # 16 * 12 * 34
+        self.convblock3 = ConvBlock(
+            channels=(16, 32),
+            filter_shape=(3, 3),
+            stride=(2, 4),
+            padding=0,
+            batch_norm=True,
+            activation=True,
+        )
+        # 32 * 5 * 8
+        self.resblock1 = ResBlock(32)
+        self.resblock2 = ResBlock(32)
+        self.resblock3 = ResBlock(32)
+        # 32 * 5 * 8
+        self.transconvblock1 = TransConvBlock(
+            channels=(32, 16),
+            filter_shape=(3, 3),
+            stride=(2, 4),
+            output_padding=(1, 3),
+            batch_norm=True,
+            activation=True,
+        )
+        # 16 * 12 * 34
+        self.transconvblock2 = TransConvBlock(
+            channels=(16, 8),
+            filter_shape=(3, 3),
+            stride=(2, 4),
+            output_padding=(1, 3),
+            batch_norm=True,
+            activation=True,
+        )
+        # 8 * 26 * 138
+        self.transconvblock3 = TransConvBlock(
+            channels=(8, 1),
+            filter_shape=(3, 3),
+            stride=1,
+            output_padding=0,
+            batch_norm=True,
+            activation=True,
+        )
+        # 1 * 28 * 143
         
     def forward(self, inp):
         """
         input should be tensor with dimensions (num_samples, 1, M, N)
         """
         
-#         out = self.convblock1(inp)
-#         out = self.convblock2(out)
-#         out = self.convblock3(out)
-#         out = self.transconvblock1(out)
-#         out = self.transconvblock2(out)
-#         out = self.transconvblock3(out)
-
-        out = inp.reshape(1 * 1 * 28 * 5 * 28)
-        out = self.test(out)
-        out = out.reshape(1, 1, 28, 28 * 5)
+        out = self.convblock1(inp)
+        out = self.convblock2(out)
+        out = self.convblock3(out)
         
+        out = self.resblock1(out)
+        out = self.resblock2(out)
+        out = self.resblock3(out)
+        
+        out = self.transconvblock1(out)
+        out = self.transconvblock2(out)
+        out = self.transconvblock3(out)
+
         return out
     
 class Discriminator(torch.nn.Module):
 
     def __init__(self):
         super(Discriminator, self).__init__()
-        
+        # 1 * 28 * 140
         self.convblock1 = ConvBlock(
-            channels=(1, 16),
-            filter_shape=(3, 3),
-            downsample=True,
+            channels=(1, 8),
+            filter_shape=(4, 4),
+            stride=1,
+            padding=0,
             batch_norm=False,
             activation=True,
         )
-        
+        # 8 * 25 * 137
         self.convblock2 = ConvBlock(
-            channels=(16, 32),
-            filter_shape=(3, 3),
-            downsample=True,
+            channels=(8, 16),
+            filter_shape=(4, 4),
+            stride=(2, 4),
+            padding=0,
             batch_norm=True,
             activation=True,
         )
-        
+        # 16 * 11 * 34
         self.convblock3 = ConvBlock(
-            channels=(32, 64),
-            filter_shape=(3, 3),
-            downsample=True,
+            channels=(16, 32),
+            filter_shape=(4, 4),
+            stride=(2, 4),
+            padding=0,
             batch_norm=True,
             activation=True,
         )
-        
+        # 32 * 4 * 8
         self.convblock4 = ConvBlock(
-            channels=(64, 128),
-            filter_shape=(3, 3),
-            downsample=True,
+            channels=(32, 1),
+            filter_shape=(4, 8),
+            stride=1,
+            padding=0,
             batch_norm=False,
-            activation=True,
+            activation=False,
         )
-        
-        self.fc1 = torch.nn.Linear(128 * 25 * 45, 64)
-        self.act1 = torch.nn.LeakyReLU()
-        
-        self.fc2 = torch.nn.Linear(64, 1)
-        
+        # 1 * 1 * 1
         self.sigmoid1 = torch.nn.Sigmoid()
+        # 1 * 1 * 1
 
     def forward(self, inp):
         """
@@ -132,10 +142,7 @@ class Discriminator(torch.nn.Module):
         out = self.convblock3(out)
         out = self.convblock4(out)
         
-        out = out.reshape(num_samples, 128, 25, 45)
-        out = self.fc1(out)
-        out = self.act1(out)
-        out = self.fc2(out)
+        out = out.reshape(num_samples, 1)
         
         out = self.sigmoid1(out)
         
@@ -143,16 +150,15 @@ class Discriminator(torch.nn.Module):
     
 class ConvBlock(torch.nn.Module):
     
-    def __init__(self, channels, filter_shape, downsample, batch_norm, activation):
+    def __init__(self, channels, filter_shape, stride, padding, batch_norm, activation):
         super(ConvBlock, self).__init__()
         
         self.conv = torch.nn.Conv2d(
             in_channels=channels[0],
             out_channels=channels[1],
             kernel_size=filter_shape,
-            stride=2 if downsample else 1,
-            padding='valid' if downsample else 'same',
-        
+            stride=stride,
+            padding=padding,
         )
         
         if batch_norm:
@@ -167,7 +173,6 @@ class ConvBlock(torch.nn.Module):
         else:
             self.act = torch.nn.Identity()
         
-
     def forward(self, inp):
         """
         input should be tensor with dimensions (num_samples, C, N, N)
@@ -181,16 +186,15 @@ class ConvBlock(torch.nn.Module):
     
 class TransConvBlock(torch.nn.Module):
     
-    def __init__(self, channels, filter_shape, upsample, batch_norm, activation):
+    def __init__(self, channels, filter_shape, stride, output_padding, batch_norm, activation):
         super(TransConvBlock, self).__init__()
         
         self.transconv = torch.nn.ConvTranspose2d(
             in_channels=channels[0],
             out_channels=channels[1],
             kernel_size=filter_shape,
-            stride=2 if upsample else 1,
-            padding=2,
-        
+            stride=stride,
+            output_padding=output_padding,
         )
         
         if batch_norm:
@@ -205,7 +209,6 @@ class TransConvBlock(torch.nn.Module):
         else:
             self.act = torch.nn.Identity()
         
-
     def forward(self, inp):
         """
         input should be tensor with dimensions (num_samples, C, N, N)
@@ -217,6 +220,39 @@ class TransConvBlock(torch.nn.Module):
         
         return out
     
+class ResBlock(torch.nn.Module):
+    
+    def __init__(self, channels):
+        super(ResBlock, self).__init__()
+        
+        self.convblock1 = ConvBlock(
+            channels=(channels, channels),
+            filter_shape=(3, 3),
+            stride=1,
+            padding=1,
+            batch_norm=True,
+            activation=True,
+        )
+        self.convblock2 = ConvBlock(
+            channels=(channels, channels),
+            filter_shape=(3, 3),
+            stride=1,
+            padding=1,
+            batch_norm=True,
+            activation=True,
+        )
+        
+    def forward(self, inp):
+        """
+        input should be tensor with dimensions (num_samples, C, N, N)
+        """
+        
+        out = self.convblock1(inp)
+        out = self.convblock2(out)
+        out = out + inp
+        
+        return out
+
         
 def compute_discr_loss_minimax(discr_model, target_samples, gen_samples):
     """
