@@ -24,7 +24,13 @@ class GANs_Dataset(torch.utils.data.Dataset):
             self.annotations_list = pkl.load(f)
         
     def __getitem__(self, index):
-        return (self.image_list[index], self.classes_list[index], self.annotations_list[index])
+        cls = self.classes_list[index]
+        ann = self.annotations_list[index]
+        
+        cls = torch.cat([cls] + [torch.tensor([-1]) for _ in range(5 - cls.shape[0])], dim=0)
+        ann = torch.cat([ann] + [torch.tensor([-1, -1, -1, -1]).unsqueeze(0) for _ in range(5 - ann.shape[0])], dim=0)
+            
+        return (self.image_list[index], cls, ann)
     
     def __len__(self):
         return len(self.image_list)
