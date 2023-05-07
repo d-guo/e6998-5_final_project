@@ -1,5 +1,5 @@
-# path: /Users/jay.je/Documents/CU_courses/spring2023/HPML/e6998-5_final_project/data/
-path: /Users/danielguo/Documents/Columbia/Code/Spring2023/E6998-5/final_project/e6998-5_final_project/data/
+path: /Users/jay.je/Documents/CU_courses/spring2023/HPML/e6998-5_final_project/data/
+#path: /Users/danielguo/Documents/Columbia/Code/Spring2023/E6998-5/final_project/e6998-5_final_project/data/
 train: YOLO_data_dg/
 val:  YOLO_data_dg/
 test:  YOLO_data_dg/
