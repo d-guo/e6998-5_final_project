@@ -1,6 +1,6 @@
 task: detect
 mode: predict
-model: model_results/model_digit_data_ver1_256/weights/best.pt
+model: model_results/model_google_data/weights/best.pt
 data: detection_data.yaml # this is actually irrelevant
 epochs: 100
 patience: 50
@@ -92,4 +92,4 @@ copy_paste: 0.0
 cfg: null
 v5loader: false
 tracker: botsort.yaml
-save_dir: runs/detect/train8
+save_dir: runs/detect/train10
