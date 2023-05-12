@@ -1,26 +1,40 @@
 ## Adversarial Learning on YOLOv8 Detection Model Using GANs
 
-### relevant files
+### Relevant Files
 `training_google.ipynb`: GANs training
 `networks.py`: Generator and Discriminator architectures and loss functions
 `data.py`: Dataloader for GANs training (and other things)
 `create_fgsm_images.ipynb`: create dataset of FGSM attacked examples
 `create_pgd_images.ipynb`: create dataset of PGD attacked examples
 
-### to run YOLO training
+### YOLO training
 1. 
 
-### to run GANs training
+### GANs training
 1. Unzip data to `./gans_data/data_google_large/`.
 2. Verify `./args_google_data_32.yaml` exists and references correct data paths.
 3. Verify `./GANs_training/` exists for logging purposes.
 4. Run `training_google.ipynb`.
 
 ### Results
+GANs training convergence
+
 ![GANs training loss graph](./images/GANs_loss.png)
+
+YOLO performance on original data and adversarial data before re-training
+
 ![YOLO performance on original and adversarial data](./images/yolo-perf.png)
+
+YOLO performance on original data and adversarial data after re-training
+
 ![YOLO_robust performance on original and adversarial data](./images/yolo-robust-perf.png)
+
+Timing benchmarks of each attack
+
 ![Timing benchmarks of each attack](./images/attack-benchs.png)
+
+Examples of images produced by each adversarial attack
+
 ![Adversarial examples by attack](./images/adv_exs.png)
 
 ### Observations
