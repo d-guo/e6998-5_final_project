@@ -7,65 +7,65 @@ class Generator(torch.nn.Module):
     
     def __init__(self):
         super(Generator, self).__init__()
-        # 3 * 28 * 140
+        # 3 * 32 * 32
         self.convblock1 = ConvBlock(
-            channels=(3, 8),
-            filter_shape=(3, 3),
+            channels=(3, 32),
+            filter_shape=(5, 5),
             stride=1,
             padding=0,
             batch_norm=False,
             activation=True,
         )
-        # 8 * 26 * 138
+        # 32 * 28 * 28
         self.convblock2 = ConvBlock(
-            channels=(8, 16),
+            channels=(32, 64),
             filter_shape=(3, 3),
-            stride=(2, 4),
+            stride=1,
             padding=0,
             batch_norm=True,
             activation=True,
         )
-        # 16 * 12 * 34
+        # 64 * 26 * 26
         self.convblock3 = ConvBlock(
-            channels=(16, 32),
+            channels=(64, 128),
             filter_shape=(3, 3),
-            stride=(2, 4),
+            stride=2,
             padding=0,
             batch_norm=True,
             activation=True,
         )
-        # 32 * 5 * 8
-        self.resblock1 = ResBlock(32)
-        self.resblock2 = ResBlock(32)
-        self.resblock3 = ResBlock(32)
-        # 32 * 5 * 8
+        # 128 * 13 * 13
+        self.resblock1 = ResBlock(128)
+        self.resblock2 = ResBlock(128)
+        self.resblock3 = ResBlock(128)
+        # 128 * 13 * 13
         self.transconvblock1 = TransConvBlock(
-            channels=(32, 16),
+            channels=(128, 64),
             filter_shape=(3, 3),
-            stride=(2, 4),
-            output_padding=(1, 3),
+            stride=2,
+            output_padding=(1, 1),
             batch_norm=True,
             activation=True,
         )
-        # 16 * 12 * 34
+        # 64 * 26 * 26
         self.transconvblock2 = TransConvBlock(
-            channels=(16, 8),
-            filter_shape=(3, 3),
-            stride=(2, 4),
-            output_padding=(1, 3),
-            batch_norm=True,
-            activation=True,
-        )
-        # 8 * 26 * 138
-        self.transconvblock3 = TransConvBlock(
-            channels=(8, 3),
+            channels=(64, 32),
             filter_shape=(3, 3),
             stride=1,
             output_padding=0,
             batch_norm=True,
             activation=True,
         )
-        # 3 * 28 * 140
+        # 32 * 28 * 28
+        self.transconvblock3 = TransConvBlock(
+            channels=(32, 3),
+            filter_shape=(5, 5),
+            stride=1,
+            output_padding=0,
+            batch_norm=False,
+            activation=False,
+        )
+        # 3 * 32 * 32
         
     def forward(self, inp):
         """
@@ -103,7 +103,7 @@ class Discriminator(torch.nn.Module):
         self.convblock2 = ConvBlock(
             channels=(8, 16),
             filter_shape=(4, 4),
-            stride=(2, 4),
+            stride=(4, 4),
             padding=0,
             batch_norm=True,
             activation=True,
@@ -112,7 +112,7 @@ class Discriminator(torch.nn.Module):
         self.convblock3 = ConvBlock(
             channels=(16, 32),
             filter_shape=(4, 4),
-            stride=(2, 4),
+            stride=(2, 2),
             padding=0,
             batch_norm=True,
             activation=True,
@@ -120,8 +120,8 @@ class Discriminator(torch.nn.Module):
         # 32 * 4 * 8
         self.convblock4 = ConvBlock(
             channels=(32, 1),
-            filter_shape=(4, 8),
-            stride=1,
+            filter_shape=(2, 2), #
+            stride=2,
             padding=0,
             batch_norm=False,
             activation=False,
@@ -146,7 +146,6 @@ class Discriminator(torch.nn.Module):
         out = out.reshape(num_samples, 1)
         
         out = self.sigmoid1(out)
-        
         return out
     
 class ConvBlock(torch.nn.Module):
@@ -264,6 +263,7 @@ def compute_discr_loss_minimax(discr_model, target_samples, gen_samples):
     
     discr_target_preds = discr_model(target_samples)
     discr_gen_preds = discr_model(gen_samples)
+#     print(discr_gen_preds.shape)
     
     J_D = -torch.sum(torch.log(discr_target_preds)) / num_samples - torch.sum(torch.log(1 - discr_gen_preds)) / num_samples
     

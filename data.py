@@ -32,7 +32,7 @@ class GANs_Dataset(torch.utils.data.Dataset):
         cls = torch.cat([cls] + [torch.tensor([-1]) for _ in range(self.max_cls_num - cls.shape[0])], dim=0)
         ann = torch.cat([ann] + [torch.tensor([-1, -1, -1, -1]).unsqueeze(0) for _ in range(self.max_cls_num - ann.shape[0])], dim=0)
             
-        return (self.image_list[index], cls, ann)
+        return (self.image_list[index] / 256, cls, ann)
     
     def __len__(self):
         return len(self.image_list)

@@ -4,12 +4,12 @@ model: model_results/model_digit_data_ver1_256/weights/best.pt
 data: detection_data.yaml # this is actually irrelevant
 epochs: 100
 patience: 50
-batch: 32
+batch: 64
 imgsz: 256
 save: true
 save_period: -1
 cache: false
-device: null
+device: 0
 workers: 4
 project: null
 name: null
